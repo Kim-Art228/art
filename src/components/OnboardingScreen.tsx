@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
-import { Check, Info, Search } from 'lucide-react';
+import { Check, ChevronLeft, Info, Search } from 'lucide-react';
 import { GROUP_OPTIONS } from '../data/ontopData';
 
 interface OnboardingScreenProps {
   selectedGroup: string;
-  onComplete: (groupCode: string, frequencyAnswer: string) => void;
+  saving?: boolean;
+  onBack?: () => void;
+  onComplete: (groupCode: string, frequencyAnswer: string) => void | Promise<void>;
 }
 
 const FREQUENCY_OPTIONS = ['Ни разу', '1–2 раза', '3–5 раз', 'Больше 5'];
 
 export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
   selectedGroup,
+  saving = false,
+  onBack,
   onComplete,
 }) => {
   const [frequency, setFrequency] = useState<string>('3–5 раз');
@@ -39,14 +43,30 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
     <div className="min-h-screen bg-[#EFECE3] flex flex-col justify-between px-5 py-6 md:py-10">
       <div className="w-full max-w-md mx-auto flex-1 flex flex-col">
         {/* Top bar */}
-        <div className="flex items-center justify-between mb-7">
-          <span className="font-display font-bold text-lg tracking-tight text-[#1E2022]">
-            OnTop
-          </span>
-          <div className="flex items-center gap-1.5" aria-label="Шаг 1 из 3">
+        <div className="flex items-center justify-between mb-6">
+          {onBack ? (
+            <button
+              type="button"
+              onClick={onBack}
+              aria-label="Назад к выбору роли"
+              className="min-w-[44px] min-h-[44px] rounded-full bg-white hover:bg-[#FAF8F4] flex items-center justify-center text-[#1E2022] shadow-[0_1px_4px_rgba(30,32,34,0.06)] cursor-pointer"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+          ) : (
+            <span className="font-display font-bold text-lg tracking-tight text-[#1E2022]">
+              OnTop
+            </span>
+          )}
+
+          {onBack && (
+            <span className="text-[13.5px] font-medium text-[#6E7480]">Шаг 3 из 3</span>
+          )}
+
+          <div className="flex items-center gap-1.5" aria-label="Шаг 3 из 3">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#D5D0C3]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#D5D0C3]" />
             <span className="w-4 h-1.5 rounded-full bg-[#007AFF]" />
-            <span className="w-1.5 h-1.5 rounded-full bg-[#D5D0C3]" />
-            <span className="w-1.5 h-1.5 rounded-full bg-[#D5D0C3]" />
           </div>
         </div>
 
@@ -160,10 +180,11 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
       <div className="w-full max-w-md mx-auto pt-6">
         <button
           type="button"
+          disabled={saving}
           onClick={() => onComplete(activeGroupObj.code, frequency)}
-          className="w-full min-h-[52px] rounded-full bg-[#007AFF] hover:bg-[#0066D6] active:scale-[0.99] text-white font-display font-semibold text-[16px] shadow-[0_6px_20px_rgba(0,122,255,0.28)] transition-all cursor-pointer"
+          className="w-full min-h-[52px] rounded-full bg-[#007AFF] hover:bg-[#0066D6] disabled:opacity-60 active:scale-[0.99] text-white font-display font-semibold text-[16px] shadow-[0_6px_20px_rgba(0,122,255,0.28)] transition-all cursor-pointer"
         >
-          Продолжить
+          {saving ? 'Сохраняем профиль…' : 'Продолжить'}
         </button>
       </div>
     </div>

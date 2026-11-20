@@ -3,12 +3,21 @@ import { Check, ChevronRight, UserPlus } from 'lucide-react';
 import { GROUP_OPTIONS } from '../data/ontopData';
 
 interface ProfileViewProps {
+  firstName: string;
+  lastName: string;
+  role: string;
   groupCode: string;
   doneCount: number;
   overdueOrActiveCount: number;
   eventsCount: number;
   onSignOut: () => void;
 }
+
+const ROLE_LABELS: Record<string, string> = {
+  student: 'Студент',
+  leader: 'Староста',
+  teacher: 'Преподаватель',
+};
 
 const DEFAULT_NOTIF_SUBJECTS = [
   { id: 'db', label: 'Базы данных', enabled: true },
@@ -23,6 +32,9 @@ const QUIET_HOURS_OPTIONS = ['22:00–08:00', '23:00–07:00', 'Выкл'];
 const LANGUAGE_OPTIONS = ['Русский', 'Кыргызча', 'English'];
 
 export const ProfileView: React.FC<ProfileViewProps> = ({
+  firstName,
+  lastName,
+  role,
   groupCode,
   doneCount,
   overdueOrActiveCount,
@@ -40,6 +52,10 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
 
   const groupInfo =
     GROUP_OPTIONS.find((g) => g.code === groupCode) ?? GROUP_OPTIONS[0];
+  const fullName = `${firstName} ${lastName}`.trim() || 'Айбек Сыдыков';
+  const initials =
+    `${firstName?.[0] ?? 'А'}${lastName?.[0] ?? 'С'}`.toUpperCase();
+  const roleLabel = ROLE_LABELS[role] ?? role ?? 'Студент';
 
   const toggleNotif = (id: string) => {
     setNotifSettings((prev) =>
@@ -64,16 +80,16 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
       {/* Avatar & Identity */}
       <div className="flex flex-col items-center text-center pt-2">
         <div className="w-20 h-20 rounded-full bg-[#DCE9EE] flex items-center justify-center font-display font-bold text-[26px] text-[#23272B]">
-          АС
+          {initials}
         </div>
         <h1 className="font-display font-bold text-[22px] text-[#1E2022] mt-3">
-          Айбек Сыдыков
+          {fullName}
         </h1>
         <p className="text-[13.5px] text-[#6E7480] mt-0.5">
           {groupInfo.code} · {groupInfo.college}
         </p>
         <span className="mt-2 inline-block px-3 py-1 rounded-full bg-[#E1EAEF] text-[12px] font-medium text-[#3C4B57]">
-          Студент
+          {roleLabel}
         </span>
       </div>
 

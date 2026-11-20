@@ -31,6 +31,27 @@ export type NewAssignmentInput = {
   total_students: number;
 };
 
+export type UserRole = 'student' | 'leader' | 'teacher';
+
+export interface Profile {
+  id: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  role: UserRole | string;
+  group_name: string;
+  created_at?: string;
+}
+
+export type UpsertProfileInput = {
+  id: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  role: UserRole;
+  group_name: string;
+};
+
 export async function fetchAssignments(): Promise<Assignment[]> {
   const { data, error } = await supabase
     .from('assignments')
@@ -83,4 +104,32 @@ export async function deleteAssignment(id: number): Promise<void> {
   if (error) {
     throw error;
   }
+}
+
+export async function fetchProfileById(userId: string): Promise<Profile | null> {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('id, email, first_name, last_name, role, group_name, created_at')
+    .eq('id', userId)
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  return (data as Profile | null) ?? null;
+}
+
+export async function upsertProfile(payload: UpsertProfileInput): Promise<Profile> {
+  const { data, error } = await supabase
+    .from('profiles')
+    .upsert(payload, { onConflict: 'id' })
+    .select('id, email, first_name, last_name, role, group_name, created_at')
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data as Profile;
 }
