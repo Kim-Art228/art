@@ -1,0 +1,6 @@
+{
+  "name": "OnTop — Учебный трекер студентов",
+  "description": "Мобильное приложение для студентов: расписание, дедлайны заданий, лента группы и синхронизация с Supabase.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
